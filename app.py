@@ -4,7 +4,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 
-model = load_model('model.h5')
+model = load_model("model.h5", compile=False)
 class_labels = ['pituitary', 'glioma', 'notumor', 'meningioma']
 
 st.set_page_config(
