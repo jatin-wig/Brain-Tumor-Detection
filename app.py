@@ -3,9 +3,13 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.applications.efficientnet import preprocess_input
 
-model = load_model("model.h5", compile=False)
-class_labels = ['pituitary', 'glioma', 'notumor', 'meningioma']
+IMAGE_SIZE = 128
+
+model = load_model("model.h5")
+
+class_labels = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
 st.set_page_config(
     page_title="Brain Tumor Detection",
@@ -66,8 +70,8 @@ def preprocess_image(image, target_size=(128, 128)):
         image = image.convert("RGB")
     image = image.resize(target_size)
     image = img_to_array(image)
-    image = image / 255.0
     image = np.expand_dims(image, axis=0)
+    image = preprocess_input(image)
     return image
 
 def predict_tumor(image):
@@ -139,8 +143,7 @@ if uploaded_file is not None:
                 <ul>
                     <li>Most common type of primary brain tumor</li>
                     <li>Arises from glial cells that support nerve cells</li>
-                    <li>Can range from low-grade (slow-growing) to high-grade (aggressive)</li>
-                    <li>Treatment typically involves surgery, radiation, and chemotherapy</li>
+                    <li>Can range from low-grade to high-grade</li>
                 </ul>
             </div>
             """,
@@ -149,9 +152,7 @@ if uploaded_file is not None:
                 <h4>Meningioma Tumor</h4>
                 <ul>
                     <li>Typically benign and slow-growing</li>
-                    <li>Develops from meninges (protective membranes around brain)</li>
-                    <li>More common in women and older adults</li>
-                    <li>Treatment may include observation, surgery, or radiation</li>
+                    <li>Develops from meninges</li>
                 </ul>
             </div>
             """,
@@ -159,10 +160,8 @@ if uploaded_file is not None:
             <div class="interpretation-box">
                 <h4>Pituitary Tumor</h4>
                 <ul>
-                    <li>Affects pituitary gland at base of brain</li>
-                    <li>Often causes hormone imbalances</li>
-                    <li>Mostly benign (adenomas)</li>
-                    <li>Treatment options include medication, surgery, or radiation</li>
+                    <li>Affects hormone regulation</li>
+                    <li>Mostly benign</li>
                 </ul>
             </div>
             """,
@@ -170,10 +169,7 @@ if uploaded_file is not None:
             <div class="interpretation-box">
                 <h4>No Tumor Detected</h4>
                 <ul>
-                    <li>No signs of glioma, meningioma, or pituitary tumors</li>
-                    <li>Continue regular medical check-ups as recommended</li>
-                    <li>Maintain a healthy lifestyle for brain health</li>
-                    <li>Consult a doctor if you experience neurological symptoms</li>
+                    <li>No tumor patterns detected</li>
                 </ul>
             </div>
             """
@@ -183,46 +179,29 @@ if uploaded_file is not None:
     
     st.markdown('<h3 class="section-title">Important Notice</h3>', unsafe_allow_html=True)
     st.error("""
-    ⚠️ **Medical Disclaimer:**  
-    This AI tool is for research and educational purposes only. It should **NOT** be used as a substitute for professional medical diagnosis. 
-    Always consult with a qualified healthcare provider for medical advice and treatment decisions.
+    ⚠️ Medical Disclaimer:
+    This AI tool is for research and educational purposes only.
     """)
 
 st.sidebar.markdown('<h2 class="section-title">How to Use</h2>', unsafe_allow_html=True)
 st.sidebar.markdown("""
 <div style="background-color: #E8F0FE; padding: 1rem; border-radius: 10px;">
     <ol>
-        <li><b>Upload</b> a brain MRI scan (JPG/PNG format)</li>
-        <li><b>Wait</b> for the AI model to analyze the image</li>
-        <li><b>Review</b> the detection results</li>
-        <li><b>Consult</b> a medical professional for diagnosis</li>
+        <li>Upload a brain MRI scan</li>
+        <li>Wait for analysis</li>
+        <li>Review the results</li>
     </ol>
 </div>
 """, unsafe_allow_html=True)
 
-st.sidebar.markdown('<h2 class="section-title">About This Tool</h2>', unsafe_allow_html=True)
-st.sidebar.markdown("""
-<div style="background-color: #E6F4EA; padding: 1rem; border-radius: 10px;">
-    <p>This AI-powered tool uses deep learning to detect brain tumors in MRI scans:</p>
-    <ul>
-        <li><b>Model:</b> VGG16 Transfer Learning</li>
-        <li><b>Training Data:</b> 2870 brain MRI scans</li>
-        <li><b>Classes:</b> Glioma, Meningioma, Pituitary, No Tumor</li>
-        <li><b>Accuracy:</b> ~98% on test data</li>
-    </ul>
-</div>
-""", unsafe_allow_html=True)
-
 st.sidebar.markdown('<h2 class="section-title">Source Code</h2>', unsafe_allow_html=True)
-st.sidebar.markdown(f"""
+st.sidebar.markdown("""
 <div style="text-align: center; margin-top: 1rem;">
     <a href="https://github.com/wigjatin/Brain-Tumor-Detection" target="_blank" class="github-badge">
-        <img src="https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github" alt="GitHub Repository">
+        GitHub Repository
     </a>
-    <p style="margin-top: 0.5rem; font-size: 0.9rem;">Explore the code and dataset</p>
+    <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+        View the full source code and training pipeline
+    </p>
 </div>
-""", unsafe_allow_html=True)
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("""
 """, unsafe_allow_html=True)
